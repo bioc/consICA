@@ -26,6 +26,6 @@ input (X-mean(X)) and (S*M)
 }
 \examples{
 data("samples_data")
-cica <- consICA(samples_data, ncomp=15, ntry=10, show.every=0)
+cica <- consICA(samples_data, ncomp=15, ntry=10, ncores = 2, show.every=0)
 var_ic <- estimateVarianceExplained(cica)
 }
