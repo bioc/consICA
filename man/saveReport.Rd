@@ -45,12 +45,12 @@ Save PDF report with description of each independent component
 for the component, ANOVA analysis for samples characteristics and stability
 }
 \examples{
-data("samples_data")
-cica <- consICA(samples_data, ncomp=15, ntry=10, ncores = 2, show.every=0)
-if(FALSE){
-cica <- getGO(cica, db = "BP")
-}
-saveReport(cica, Var=samples_data$Var, surv = samples_data$Sur)
+# data("samples_data")
+# cica <- consICA(samples_data, ncomp=15, ntry=10, ncores = 2, show.every=0)
+# if(FALSE){
+# cica <- getGO(cica, db = "BP")
+# }
+# saveReport(cica, Var=samples_data$Var, surv = samples_data$Sur)
 }
 \author{
 Petr V. Nazarov

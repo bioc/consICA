@@ -11,9 +11,9 @@
 #'     \item{R2_ics}{Amount of variance explained by the each independent 
 #'      component}
 #' @examples
-#' data("samples_data")
-#' cica <- consICA(samples_data, ncomp=15, ntry=10, show.every=0)
-#' var_ic <- estimateVarianceExplained(cica)
+#' # data("samples_data")
+#' # cica <- consICA(samples_data, ncomp=15, ntry=10, show.every=0)
+#' # var_ic <- estimateVarianceExplained(cica)
 #' @export
 estimateVarianceExplained <- function(cica, X=NULL) {
     if(!is.consICA(cica)) {
@@ -67,9 +67,9 @@ estimateVarianceExplained <- function(cica, X=NULL) {
 #' @return A numeric vector compliant to `barplot` output
 #' @export
 #' @examples
-#' data("samples_data")
-#' cica <- consICA(samples_data, ncomp=15, ntry=10, show.every=0)
-#' p <- plotICVarianceExplained(cica, sort = "asc")
+#' # data("samples_data")
+#' # cica <- consICA(samples_data, ncomp=15, ntry=10, show.every=0)
+#' # p <- plotICVarianceExplained(cica, sort = "asc")
 plotICVarianceExplained <- function(cica,
                                     sort=NULL,
                                     las=2,

@@ -14,11 +14,11 @@
 #'     \item{p.value}{p-value for ANOVA test for factor} 
 #'     \item{p.value_disp}{string for p-value printing}
 #' @examples
-#' data("samples_data")
-#' Var <- data.frame(SummarizedExperiment::colData(samples_data))
-#' cica <-  consICA(samples_data, ncomp=10, ntry=1, ncores=1, show.every=0)
-#' # Run ANOVA for 4th independent component
-#' anova <- anovaIC(cica, Var=Var, icomp = 4)
+#' # data("samples_data")
+#' # Var <- data.frame(SummarizedExperiment::colData(samples_data))
+#' # cica <-  consICA(samples_data, ncomp=10, ntry=1, ncores=1, show.every=0)
+#' ## Run ANOVA for 4th independent component
+#' # anova <- anovaIC(cica, Var=Var, icomp = 4)
 #' @export
 #' @import ggplot2
 anovaIC <- function(cica, Var=NULL, icomp = 1, plot = TRUE, mode = "violin",
