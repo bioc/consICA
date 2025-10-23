@@ -17,12 +17,14 @@
 #' @author Petr V. Nazarov
 #' @return TRUE when successfully generate report
 #' @examples
-#' # data("samples_data")
-#' # cica <- consICA(samples_data, ncomp=15, ntry=10, ncores = 2, show.every=0)
-#' # if(FALSE){
-#' # cica <- getGO(cica, db = "BP")
-#' # }
-#' # saveReport(cica, Var=samples_data$Var, surv = samples_data$Sur)
+#' if(FALSE){
+#'   data("samples_data")
+#'   cica <- consICA(samples_data, ncomp=15, ntry=10, ncores = 2, show.every=0)
+#'   if(FALSE){
+#'     cica <- getGO(cica, db = "BP")
+#'   }
+#'   saveReport(cica, Var=samples_data$Var, surv = samples_data$Sur)
+#' }
 #' @export
 # @import gplots
 #' @importFrom pheatmap pheatmap

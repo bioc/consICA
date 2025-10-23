@@ -41,7 +41,7 @@ For details on the computation see the help of the
 \code{\link[consICA]{estimateVarianceExplained}} function
 }
 \examples{
-# data("samples_data")
+data("samples_data")
 # cica <- consICA(samples_data, ncomp=15, ntry=10, show.every=0)
 # p <- plotICVarianceExplained(cica, sort = "asc")
 }

@@ -39,7 +39,7 @@ independent component across each (clinical) factor as `aov(IC ~ factor)`.
 Plot distributions of samples' weight for top 9 significant factors.
 }
 \examples{
-# data("samples_data")
+data("samples_data")
 # Var <- data.frame(SummarizedExperiment::colData(samples_data))
 # cica <-  consICA(samples_data, ncomp=10, ntry=1, ncores=1, show.every=0)
 ## Run ANOVA for 4th independent component
