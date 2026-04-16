@@ -76,8 +76,10 @@ survivalAnalysis <- function(cica,surv=NULL,time=NULL,event=NULL,fdr=0.05){
                     function(comp){
                       0 + d1[comp] * R2[comp] * ZM[comp,] 
                     })
-   score_sumed <- matrix(unlist(score1), ncol = length(score1[[1]]))
-   score_sumed <- colSums(score_sumed)
+   #score_sumed <- matrix(unlist(score1), ncol = length(score1[[1]]))
+   score_matrix <- do.call(rbind, score1)
+
+   score_sumed <- colSums(score_matrix)
    names(score_sumed) <- names((score1[[1]])) 
    score <- list("surv" = score_sumed)
    
@@ -90,7 +92,7 @@ survivalAnalysis <- function(cica,surv=NULL,time=NULL,event=NULL,fdr=0.05){
    plot(survfit(Surv(time = surv$time[i], event = surv$event[i]) ~ 
                   fscore[i],type="kaplan-meier"),col=c("blue","red"),
         conf.int=FALSE,las=2,lwd=3,cex.axis=1)
-   legend(x="bottomleft",legend=c("HS<median","HS>median"),cex=0.8,
+   legend(x="topright",legend=c("HS<median","HS>median"),cex=0.8,
           col=c("blue","red"),lwd=3)
    title(sprintf("logtest pv=%.1e\nLHR=%.2f (CI = %.2f, %.2f)",pv,
                  lhr[1],lhr[2], lhr[3]),cex.main=1)
