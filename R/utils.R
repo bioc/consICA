@@ -88,6 +88,39 @@ getTopIdx <- function(x,n){
   return(order(x,na.last=TRUE,decreasing=TRUE)[seq.int(1,n)])
 }
 
+#' @title Bijective sign-aware matching of independent components
+#' @description Match columns of `S` to columns of `Sref` one-to-one (a signed
+#' permutation) maximising squared correlation, most-confident pair first
+#' ("greedy with removal"). Each column of `S` is used exactly once, which
+#' prevents the double-assignment produced by a per-column `which.max`. On
+#' well-separated components the result is identical to the optimal (Hungarian)
+#' assignment.
+#' @param S metagene matrix (features x ncomp) to be aligned
+#' @param Sref reference metagene matrix (features x ncomp)
+#' @return signed integer vector `p` of length `ncomp`; for reference component
+#' `ic`, `p[ic]` is the matched column of `S` and its sign the correlation sign
+alignComponents <- function(S, Sref){
+  r <- cor(S, Sref)
+  rr <- r^2
+  nc <- ncol(Sref)
+  p <- integer(nc)
+  free.row <- rep(TRUE, nrow(r))
+  free.col <- rep(TRUE, nc)
+  for (step in seq_len(nc)){
+    m <- rr
+    m[!free.row, ] <- -Inf
+    m[, !free.col] <- -Inf
+    idx <- which.max(m)
+    i <- ((idx - 1) %% nrow(r)) + 1      
+    j <- ((idx - 1) %/% nrow(r)) + 1     
+    s <- sign(r[i, j]); if (s == 0) s <- 1
+    p[j] <- i * s
+    free.row[i] <- FALSE
+    free.col[j] <- FALSE
+  }
+  return(p)
+}
+
 ## Draw a table to graphical window
 drawTable <- function(data,x0=0,y0=1,dx=0.2,dy=0.05,row.names=TRUE,
                       cex=1,col=1,new=TRUE, bg=NA, float.format = "%.2e"){

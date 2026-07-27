@@ -272,25 +272,25 @@ consICA <- function(X,
         return(Res)
     }
     
-    ## correlate results
-    ## s.cor - to which ic of the BEST decomposition we should address?
-    if(verbose) message("Correlate rows of S between tries\n")
+    ## align each try to the best decomposition with a one-to-one matching.
+    ## s.cor[itry, ic] = signed component of `itry` matching component `ic` of
+    ## the best try (sign encodes orientation). Bijective, via alignComponents()
+    ## to avoid double-assignment of the same source to several components.
+    if(verbose) message("Align components between tries\n")
     s.cor <- matrix(nrow=ntry,ncol=ncomp)
-    s.cor[Res$i.best,] <- seq.int(1,ncomp)
-    itry <- 1
-    for (itry in seq.int(1,ntry)[-Res$i.best]) {
-        r <- cor(S[[itry]],S[[Res$i.best]])
-        s.cor[itry,] <- apply((r)^2,2,which.max)
-        for (ic in seq.int(1,ncomp))
-            s.cor[itry,ic] <- s.cor[itry,ic] * sign(r[s.cor[itry,ic],ic])
+    for (itry in seq.int(1,ntry)) {
+      if (itry == Res$i.best) {
+        s.cor[itry,] <- seq.int(1,ncomp)
+      } else {
+        s.cor[itry,] <- alignComponents(S[[itry]], S[[Res$i.best]])
+      }
     }
     ## build consensus S, M
     
     if(verbose) message("Build consensus ICA\n")
-    Res$S[,] <- S[[1]]
-    Res$M[,] <- M[[1]]
-    itry<-2 # delete
-    for (itry in seq.int(2,ntry)){ ## itry=2, because 1 is already there
+    Res$S[,] <- 0
+    Res$M[,] <- 0
+    for (itry in seq.int(1,ntry)){ 
         for (ic in seq.int(1,ncomp)) {
             Res$S[,ic] <- Res$S[,ic] + S[[itry]][,abs(s.cor[itry,ic])]* 
                 sign(s.cor[itry,ic])
