@@ -56,7 +56,8 @@ saveReport <- function(cica, Genes=NULL, Var=NULL, surv=NULL,
   for (icomp in show.components){
     par(mfcol=c(1,1),mar=c(3,3,2,1))
     plot.new()
-    title(sprintf(main,icomp,mean(IC$stab[,icomp])),cex.main=0.8)
+    stab.ic <- if (is.null(IC$stab)) NA_real_ else mean(IC$stab[,icomp])
+    title(sprintf(main,icomp,stab.ic),cex.main=0.8)
     ## gene signature
     par(fig=c(0,0.2,0.85,1),new=TRUE,mar=c(2,2,2,1))
     plot(sort(IC$S[,icomp]),col = "#0000FF", type="l", ylab=("involvement"),
