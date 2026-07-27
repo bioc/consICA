@@ -1,3 +1,15 @@
+# CHANGES IN VERSION 2.11.1
+
+* Updated consensus assembly in consICA(). Components of every run are now
+  aligned to the best run with a one-to-one (bijective) matching, and the
+  consensus is accumulated from zero. Previously the average was seeded with
+  the first run in its native order (its own alignment was discarded), and the
+  per-component matching could assign one source to several components. This
+  removes a stability drop at ntry=2 and corrects the `stab` metric; results
+  for large ntry (e.g. 20) are unchanged.
+* saveReport() no longer errors for single-run results (ntry=1, no stability).
+
+
 # CHANGES IN VERSION 2.0.0
 
 * allowed input format: SummarizedExperiment, matrix, Seurat
