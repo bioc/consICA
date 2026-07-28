@@ -99,6 +99,7 @@ getTopIdx <- function(x,n){
 #' @param Sref reference metagene matrix (features x ncomp)
 #' @return signed integer vector `p` of length `ncomp`; for reference component
 #' `ic`, `p[ic]` is the matched column of `S` and its sign the correlation sign
+#' @keywords internal
 alignComponents <- function(S, Sref){
   r <- cor(S, Sref)
   rr <- r^2
@@ -325,16 +326,18 @@ num2fact <- function(x, nlev = 4, digits=1){
 #' This function sets up the environment for parallel computing.
 #' @param ncores number of processors
 #' @param BPPARAM bpparameter from bpparam
+#' @param seed optional integer seed passed to the parallel backend as
+#' `RNGseed` for reproducible parallel runs. Default NULL
 #' @return BAPPARAM settings
 #' @keywords internal
-set_bpparam <- function(ncores = 0, BPPARAM = NULL){
+set_bpparam <- function(ncores = 0, BPPARAM = NULL, seed = NULL){
   if (is.null(BPPARAM)) {
     if (ncores != 0) {
       if (.Platform$OS.type == "windows") {
-        result <- SnowParam(workers = ncores)
+        result <- SnowParam(workers = ncores, RNGseed = seed)
       }
       else {
-        result <- MulticoreParam(workers = ncores)
+        result <- MulticoreParam(workers = ncores, RNGseed = seed)
       }
     }
     else {

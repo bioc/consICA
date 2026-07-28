@@ -6,12 +6,15 @@
 Adapt from `FEAST`
 This function sets up the environment for parallel computing.}
 \usage{
-set_bpparam(ncores = 0, BPPARAM = NULL)
+set_bpparam(ncores = 0, BPPARAM = NULL, seed = NULL)
 }
 \arguments{
 \item{ncores}{number of processors}
 
 \item{BPPARAM}{bpparameter from bpparam}
+
+\item{seed}{optional integer seed passed to the parallel backend as
+`RNGseed` for reproducible parallel runs. Default NULL}
 }
 \value{
 BAPPARAM settings

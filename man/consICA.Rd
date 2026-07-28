@@ -16,7 +16,8 @@ consICA(
   fun = "logcosh",
   alg.typ = "deflation",
   verbose = FALSE,
-  assay_string = NULL
+  assay_string = NULL,
+  seed = NULL
 )
 }
 \arguments{
@@ -54,8 +55,12 @@ components are extracted simultaneously. Default value is "deflation"}
 \item{verbose}{logic TRUE or FALSE. Use TRUE for print process steps. 
 Default value is FALSE}
 
-\item{assay_string}{name of assay for `SummarizedExperiment` or `Seurat` 
+\item{assay_string}{name of assay for `SummarizedExperiment` or `Seurat`
 input object `X`. Default value is NULL}
+
+\item{seed}{optional integer seed for reproducibility. If set, results are
+reproducible on repeated runs, including in parallel (`ncores` > 1) and
+independently of the number of cores. Default value is NULL (random each run)}
 }
 \value{
 a list with

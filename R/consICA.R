@@ -24,8 +24,11 @@
 #' components are extracted simultaneously. Default value is "deflation"
 #' @param verbose logic TRUE or FALSE. Use TRUE for print process steps. 
 #'     Default value is FALSE
-#' @param assay_string name of assay for `SummarizedExperiment` or `Seurat` 
+#' @param assay_string name of assay for `SummarizedExperiment` or `Seurat`
 #' input object `X`. Default value is NULL
+#' @param seed optional integer seed for reproducibility. If set, results are
+#' reproducible on repeated runs, including in parallel (`ncores` > 1) and
+#' independently of the number of cores. Default value is NULL (random each run)
 #' @return a list with
 #'         \item{X}{input object}
 #'         \item{nsamples, nfeatures}{dimension of X}
@@ -74,7 +77,8 @@ consICA <- function(X,
                     fun="logcosh",
                     alg.typ="deflation",
                     verbose=FALSE,
-                    assay_string = NULL){
+                    assay_string = NULL,
+                    seed = NULL){
   
     if(! (inherits (X, "SummarizedExperiment") | inherits (X, "matrix") | 
         inherits (X, "Seurat")) ){
@@ -172,6 +176,7 @@ consICA <- function(X,
     ## Parallel section starts
     ##>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+    if (!is.null(seed)) set.seed(seed)
     preICA <- outICA(X, n.comp=ncomp, verbose = verbose)
     
     if(verbose){
@@ -203,7 +208,7 @@ consICA <- function(X,
         return(list(S=SP,M=MP))
       }
       
-      bp_param <- set_bpparam(ncores, BPPARAM = bpparam)
+      bp_param <- set_bpparam(ncores, BPPARAM = bpparam, seed = seed)
       bp_param$progressbar <- TRUE
       seqntry <- seq.int(ntry)
       MRICA <- bplapply(X=seqntry, FUN = par_fica, BPPARAM = bp_param,
