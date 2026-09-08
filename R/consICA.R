@@ -52,7 +52,7 @@
 #' @export
 
 #' @importFrom fastICA fastICA ica.R.def ica.R.par
-#' @importFrom BiocParallel bplapply SnowParam MulticoreParam bpparam
+#' @importFrom BiocParallel bplapply SnowParam MulticoreParam SerialParam bpparam
 #' @import topGO org.Hs.eg.db 
 #' @import GO.db 
 #' @importFrom graph nodeData
@@ -176,7 +176,6 @@ consICA <- function(X,
     ## Parallel section starts
     ##>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-    if (!is.null(seed)) set.seed(seed)
     preICA <- outICA(X, n.comp=ncomp, verbose = verbose)
     
     if(verbose){
@@ -189,54 +188,46 @@ consICA <- function(X,
     }
     t0 <- Sys.time()
     ## multi run ICA
+    ## one run of ICA (used for every consensus try)
+    par_fica <- function(x, Res, Z, ncomp, alg.typ, fun, preICA){
+      suppressPackageStartupMessages({
+        requireNamespace("fastICA")
+        requireNamespace("Rfast")
+      })
+      SP <- Res$S + NA
+      MP <- Res$M + NA
+      ic <- coreICA(Z, n.comp=ncomp, preICA=preICA, alg.typ=alg.typ, fun=fun)
+      SP[,] <- ic$S
+      MP[,] <- ic$A
+      return(list(S=SP, M=MP))
+    }
+
     if (ncores > 1) {
-      
-      par_fica <- function(x=x, Res=Res,Z,ncomp=ncomp,alg.typ=alg.typ,fun=fun){
-        suppressPackageStartupMessages({
-          requireNamespace("fastICA")
-          requireNamespace("Rfast")
-        })
-
-        SP <- Res$S + NA
-        MP <- Res$M + NA
-
-        #ic <- fastICA(Z,n.comp=ncomp,alg.typ=alg.typ,fun=fun)
-        ic <- coreICA(Z, n.comp=ncomp,preICA=preICA, alg.typ=alg.typ,fun=fun)
-        SP[,] <- ic$S
-        MP[,] <- ic$A
-        
-        return(list(S=SP,M=MP))
-      }
-      
+      ## parallel: `seed` (if given) is forwarded as RNGseed -> reproducible
+      ## and core-count independent, without touching the global RNG.
+      ## seed = NULL reproduces the previous behaviour exactly.
       bp_param <- set_bpparam(ncores, BPPARAM = bpparam, seed = seed)
       bp_param$progressbar <- TRUE
-      seqntry <- seq.int(ntry)
-      MRICA <- bplapply(X=seqntry, FUN = par_fica, BPPARAM = bp_param,
-                        Res=Res,Z=X,ncomp=ncomp,alg.typ=alg.typ,fun=fun)
-
-    }else{
-      if(verbose){
-        m <- ifelse(show.every > 0, 
-                     paste("showing progress every",show.every,"run(s)\n"),
-                     "\n")
-        message("Execute one-core analysis ", m)
+      MRICA <- bplapply(X=seq.int(ntry), FUN = par_fica, BPPARAM = bp_param,
+                        Res=Res, Z=X, ncomp=ncomp, alg.typ=alg.typ, fun=fun,
+                        preICA=preICA)
+    } else if (!is.null(seed)) {
+      ## single core, reproducible on request: SerialParam RNGseed (no set.seed)
+      MRICA <- bplapply(X=seq.int(ntry), FUN = par_fica,
+                        BPPARAM = SerialParam(RNGseed = seed),
+                        Res=Res, Z=X, ncomp=ncomp, alg.typ=alg.typ, fun=fun,
+                        preICA=preICA)
+    } else {
+      ## single core, default: unchanged from previous versions
+      MRICA <- list()
+      for (itry in seq.int(1,ntry)) {
+        MRICA[[itry]] <- list()
+        MRICA[[itry]]$S <- Res$S + NA
+        MRICA[[itry]]$M <- Res$M + NA
+        ic <- coreICA(X, n.comp=ncomp, preICA=preICA, alg.typ=alg.typ, fun=fun)
+        MRICA[[itry]]$S[,] <- ic$S
+        MRICA[[itry]]$M[,] <- ic$A
       }
-        
-        MRICA <- list()
-        for(itry in seq.int(1,ntry)){
-            MRICA[[itry]] <- list()
-            MRICA[[itry]]$S <- Res$S + NA
-            MRICA[[itry]]$M <- Res$M + NA
-            
-            #ic <- fastICA(X, n.comp=ncomp, alg.typ=alg.typ,fun=fun)
-            ic <- coreICA(X, n.comp=ncomp,preICA=preICA,alg.typ=alg.typ,fun=fun)
-            MRICA[[itry]]$S[,] <- ic$S
-            MRICA[[itry]]$M[,] <- ic$A
-            
-            if (itry%%show.every == 0 & show.every > 0) {
-              if(verbose) message("try #",itry," of ",ntry,"\n")
-            }
-        }
     }
     
     if(verbose){

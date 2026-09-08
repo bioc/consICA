@@ -3,7 +3,7 @@ Type: Package
 biocViews: Technology, StatisticalMethod, Sequencing, RNASeq, Transcriptomics, 
   Classification, FeatureExtraction
 Title: consensus Independent Component Analysis
-Version: 2.11.1
+Version: 2.11.2
 Authors@R: 
     c(person(given = "Petr V.",
              family = "Nazarov",
@@ -39,4 +39,4 @@ Imports: fastICA (>= 1.2.1),
 Depends: R (>= 4.2.0)
 Suggests: knitr, BiocStyle, rmarkdown, testthat, Seurat
 VignetteBuilder: knitr
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
