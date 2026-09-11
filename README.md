@@ -1,4 +1,4 @@
-# consICA: Consensus ICA R-package for multiomics data analysis
+# consICA: Consensus ICA R-package for multiomics data analysis <img src="man/figures/logo_consICA.png" align="right" height="120" alt="consICA logo"/>
 consICA implements a data-driven deconvolution method – consensus independent component analysis (ICA) to decompose heterogeneous omics data and extract features suitable for patient diagnostics and prognostics. The method separates biologically relevant transcriptional signals from technical effects and provides information about cellular composition and biological processes [1]. The implementation of parallel computing in the package ensures the efficient analysis on the modern multicore systems.
 
 ## Installation
